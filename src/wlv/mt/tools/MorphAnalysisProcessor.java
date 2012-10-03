@@ -4,13 +4,14 @@ import java.io.*;
 import java.util.*;
 import wlv.mt.features.util.*;
 
-
 /**
- * This is a processor for the output of the MADA morphological analyser for Arabic
+ * This is a processor for the output of the MADA morphological analyser for
+ * Arabic
+ *
  * @author Catalina Hallett
  *
  */
-public class MorphAnalysisProcessor extends ResourceProcessor{
+public class MorphAnalysisProcessor extends ResourceProcessor {
 
     BufferedReader brInput;
     private static String SENT_START = ";;; SENTENCE ";
@@ -18,15 +19,14 @@ public class MorphAnalysisProcessor extends ResourceProcessor{
     private static String WORD_START = ";;WORD";
     int count = 0;
 
-    public MorphAnalysisProcessor(String inputFile)  {
+    public MorphAnalysisProcessor(String inputFile) {
         try {
-            System.out.println("input to map: "+inputFile);
+            System.out.println("input to map: " + inputFile);
             brInput = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile)));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
     public void processNextSentence(Sentence sent) {
         try {
@@ -43,16 +43,17 @@ public class MorphAnalysisProcessor extends ResourceProcessor{
                     line = brInput.readLine();
                 }
 
-                
+
                 //this is the line ;;WORD word
                 //we get the word from it
                 if (line == null) {
-  //                  System.out.println("reached eof");
+                    //                  System.out.println("reached eof");
                     return;
-                    
+
                 }
-                if (line.startsWith(SENT_END))
+                if (line.startsWith(SENT_END)) {
                     continue;
+                }
 
                 position++;
                 String[] words = line.split(" ");
@@ -62,7 +63,7 @@ public class MorphAnalysisProcessor extends ResourceProcessor{
                     line = brInput.readLine();	//line containing the best word analysis
                     //this is the line we need
                     //we check first if it contains a pronoun, and if so, we process it further
-                    if (line.contains("PRON")||line.contains("SUFF_DO")) {
+                    if (line.contains("PRON") || line.contains("SUFF_DO")) {
                         //				System.out.println("found pron on line: " + line);
                         String[] features = line.split(" ");
                         //features are: probability diac lex bw gloss pos prc3 prc2 prc1 prc0 per asp vox mod gen num stt cas enc0 rat source stem stemcat
@@ -70,7 +71,7 @@ public class MorphAnalysisProcessor extends ResourceProcessor{
                         String bw = features[3];
                         String pos = features[5].split(":")[1];
                         if (pos.equals("noun") || pos.equals("verb")) {
-                           
+
                             String[] comps = bw.split("/");
                             //bw:+bay~in/NOUN++hum/POSS_PRON_3MP
                             //bw:na/IV1P+fosu/IV+(null)/IVSUFF_MOOD:J+hu/IVSUFF_DO:3MS
@@ -91,9 +92,9 @@ public class MorphAnalysisProcessor extends ResourceProcessor{
                                         wordMorph.setNum(comp.substring(endPron + 1, comp.length()));
                                         //	if (pos.equals("verb"))
                                         //	System.out.println(count);
-                                        
+
                                     }
-                                                                        wordMorph.setPosition(position);
+                                    wordMorph.setPosition(position);
                                     sent.addWordMorph(wordMorph);
                                     count++;
 
@@ -112,9 +113,9 @@ public class MorphAnalysisProcessor extends ResourceProcessor{
                                         wordMorph.setNum(comp.substring(endPron + 2, comp.length()));
                                         //	if (pos.equals("verb"))
                                         //	System.out.println(count);
-                                        
+
                                     }
-                                //    wordMorph.print();
+                                    //    wordMorph.print();
 
                                     count++;
                                     wordMorph.setPosition(position);

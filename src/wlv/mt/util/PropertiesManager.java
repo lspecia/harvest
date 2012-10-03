@@ -18,28 +18,29 @@ public class PropertiesManager extends java.util.Properties {
     private static final boolean THROW_EXCEPTION_ON_LOAD_FAILURE = true;
     private static final boolean LOAD_AS_RESOURCE_BUNDLE = false;
     private static final String SUFFIX = ".properties";
-    
 
     public PropertiesManager() {
         String config = findConfig();
-        if (config!=null){
-            try{
-                System.out.println("Loading properties from file: "+config);
-                         File f = new File(config);
-          //  System.out.println(f.getPath());
-            FileInputStream in = new FileInputStream(config);
-            this.load(in);
-            in.close();
-            }catch(Exception e ){e.printStackTrace();;}
+        if (config != null) {
+            try {
+                System.out.println("Loading properties from file: " + config);
+                File f = new File(config);
+                //  System.out.println(f.getPath());
+                FileInputStream in = new FileInputStream(config);
+                this.load(in);
+                in.close();
+            } catch (Exception e) {
+                e.printStackTrace();;
+            }
+        } else {
+            System.out.println("Can't find default config file");
         }
-    else
-                 System.out.println("Can't find default config file");
     }
 
     public PropertiesManager(String file) {
         try {
             File f = new File(file);
-          //  System.out.println(f.getPath());
+            //  System.out.println(f.getPath());
             FileInputStream in = new FileInputStream(file);
             this.load(in);
             in.close();
@@ -116,17 +117,17 @@ public class PropertiesManager extends java.util.Properties {
 
     }
 
-//    
+//
     public HashMap<String, String> getProperties(String suff) {
         String suffix = suff.toLowerCase() + ".";
-      //  System.out.println(suffix);
+        //  System.out.println(suffix);
         HashMap<String, String> result = new HashMap<String, String>();
         Enumeration keys = propertyNames();
         while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();
-        //    System.out.println(key);
+            //    System.out.println(key);
             if (key.startsWith(suffix)) {
-         //       System.out.println(key);
+                //       System.out.println(key);
                 result.put(key, getProperty(key));
             }
         }
@@ -136,36 +137,39 @@ public class PropertiesManager extends java.util.Properties {
     public void loadProperties(final String name) {
         loadProperties(name, Thread.currentThread().getContextClassLoader());
     }
-    
-    public String getString(String key){
-    	return (String)(get(key));
+
+    public String getString(String key) {
+        return (String) (get(key));
     }
 
-    private static String findConfig(){
-        String config=defConfigFile;
+    private static String findConfig() {
+        String config = defConfigFile;
         File f = new File(config);
-        if (f.exists())
+        if (f.exists()) {
             return config;
+        }
         //search outside the package
-        try{
-        f = new File(wlv.mt.util.PropertiesManager.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
+        try {
+            f = new File(wlv.mt.util.PropertiesManager.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
 //        config = "./../../../"+defConfigFile;
-  
-        f = new File(f.getPath()+File.separator+config);
-              System.out.println("looking in "+f.getPath());
-        if (f.exists())
-            return f.getPath();
-        }catch (Exception e){e.printStackTrace();}
+
+            f = new File(f.getPath() + File.separator + config);
+            System.out.println("looking in " + f.getPath());
+            if (f.exists()) {
+                return f.getPath();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //search user.dir
-        f = new File(System.getProperty("user.dir")+File.separator+defConfigFile);
-        System.out.println("looking in "+f.getPath());
-        if (f.exists())
+        f = new File(System.getProperty("user.dir") + File.separator + defConfigFile);
+        System.out.println("looking in " + f.getPath());
+        if (f.exists()) {
             return f.getPath();
+        }
 
         //serach classpath
 //        f = new File(System.getProperty("java.class.path")
         return null;
     }
-
-
 }

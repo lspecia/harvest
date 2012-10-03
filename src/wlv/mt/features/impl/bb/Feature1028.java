@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package wlv.mt.features.impl.bb;
 
@@ -12,46 +12,44 @@ import wlv.mt.tools.FileModel;
 import wlv.mt.tools.Giza;
 
 /**
- * average number of translations per source word in the sentence (threshold in giza1: prob > 0.5) weighted by the frequency of each word in the source corpus
+ * average number of translations per source word in the sentence (threshold in
+ * giza1: prob > 0.5) weighted by the frequency of each word in the source
+ * corpus
+ *
  * @author Catalina Hallett
  *
- * 
+ *
  */
-
 public class Feature1028 extends Feature {
 
-	final static Float probThresh = 0.05f;
-	
-	public Feature1028(){
-		setIndex(1028);
-		setDescription("average number of translations per source word in the sentence (threshold in giza1: prob > 0.5) weighted by the frequency of each word in the source corpus");
-		HashSet res = new HashSet<String>();
-		res.add("Giza");
-		res.add("Freq");
-		setResources(res);
-	}
-	
-	
-	/* (non-Javadoc)
-	 * @see wlv.mt.features.util.Feature#run(wlv.mt.features.util.Sentence, wlv.mt.features.util.Sentence)
-	 */
-	@Override
-	public void run(Sentence source, Sentence target) {
-		// TODO Auto-generated method stub
-		float noTokens = source.getNoTokens();
+    final static Float probThresh = 0.05f;
 
-		float probSum = 0;
-	
-		String[] tokens = source.getTokens();
-		for (String word:tokens)
-		{
-			probSum+=Giza.getWordProbabilityCount(word, probThresh)*FileModel.getFrequency(word);
-		}
-		
-		float result = probSum/noTokens;
-		
-		setValue(result);
-	}
+    public Feature1028() {
+        setIndex(1028);
+        setDescription("average number of translations per source word in the sentence (threshold in giza1: prob > 0.5) weighted by the frequency of each word in the source corpus");
+        HashSet res = new HashSet<String>();
+        res.add("Giza");
+        res.add("Freq");
+        setResources(res);
+    }
 
+    /* (non-Javadoc)
+     * @see wlv.mt.features.util.Feature#run(wlv.mt.features.util.Sentence, wlv.mt.features.util.Sentence)
+     */
+    @Override
+    public void run(Sentence source, Sentence target) {
+        // TODO Auto-generated method stub
+        float noTokens = source.getNoTokens();
 
+        float probSum = 0;
+
+        String[] tokens = source.getTokens();
+        for (String word : tokens) {
+            probSum += Giza.getWordProbabilityCount(word, probThresh) * FileModel.getFrequency(word);
+        }
+
+        float result = probSum / noTokens;
+
+        setValue(result);
+    }
 }

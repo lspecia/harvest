@@ -1,36 +1,37 @@
 package wlv.mt.features.impl.bb;
 
-
 import wlv.mt.features.impl.Feature;
 import wlv.mt.features.util.Sentence;
+
 /**
- * absolute difference between number of ! in source and target 
+ * absolute difference between number of ! in source and target
+ *
  * @author Catalina Hallett
  *
  */
-public class Feature1072 extends Feature{
+public class Feature1072 extends Feature {
 
-	public Feature1072(){
-		setIndex(1072);
-		setDescription("absolute difference between number of ! in source and target ");
-	}
+    public Feature1072() {
+        setIndex(1072);
+        setDescription("absolute difference between number of ! in source and target ");
+    }
 
-	
-	public void run(Sentence source, Sentence target){
-		float sourceCount;
-		float targetCount;
-		if (!source.isSet("count_!"))
-			sourceCount = source.countChar('!');
-		else
-			sourceCount = (Integer)source.getValue("count_!");
-		
-		if (!target.isSet("count_!"))
-			targetCount = target.countChar('!');
-		else
-			targetCount = (Integer)target.getValue("count_!");
+    public void run(Sentence source, Sentence target) {
+        float sourceCount;
+        float targetCount;
+        if (!source.isSet("count_!")) {
+            sourceCount = source.countChar('!');
+        } else {
+            sourceCount = (Integer) source.getValue("count_!");
+        }
 
-		
-		setValue(Math.abs(sourceCount-targetCount));
-	}
-	
+        if (!target.isSet("count_!")) {
+            targetCount = target.countChar('!');
+        } else {
+            targetCount = (Integer) target.getValue("count_!");
+        }
+
+
+        setValue(Math.abs(sourceCount - targetCount));
+    }
 }
