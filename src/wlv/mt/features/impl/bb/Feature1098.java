@@ -15,8 +15,6 @@ import wlv.mt.util.*;
  * Dependency feature: number of matched dependencies divided by total number of
  * dependencies (max between source and target)
  */
-import edu.stanford.nlp.trees.*;
-import edu.stanford.nlp.process.*;
 
 /**
  * number of dependencies with aligned constituents normalized by the total
