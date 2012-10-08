@@ -44,3 +44,9 @@ The extended classes usually run the external code by spawning a new
 process (using Java's ProcessBuilder class). The results can then be
 retrieved in the form of output files by the Java code. More examples
 of different cases are in src/wlv/mt/tools/
+
+
+Dependencies
+============
+
+- Stanford POS Tagger ( http://nlp.stanford.edu/software/tagger.shtml#Download )
