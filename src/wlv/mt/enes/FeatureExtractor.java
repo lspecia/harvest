@@ -240,6 +240,18 @@ public class FeatureExtractor {
         Giza giza = new Giza(gizaPath);
     }
 
+    /**
+     * Initialize the parcers and get PCFG parse for source and target lang with Berkeley 
+     */
+    private static void parseBerkeley() {
+    	String sourceGrammarFile = resourceManager.getString("berkeley." + sourceLang + ".grammar" );
+    	
+    	
+    	String targetGrammarFile = resourceManager.getString("berkeley." + targetLang + ".grammar" );
+    	
+    	
+    }
+    
     /*
      * Computes the perplexity and log probability for the source file Required
      * by features 8-13
@@ -468,6 +480,7 @@ public class FeatureExtractor {
 
         loadGiza();
         processNGrams();
+        parseBerkeley();
 
         try {
             BufferedReader brSource = new BufferedReader(new FileReader(
