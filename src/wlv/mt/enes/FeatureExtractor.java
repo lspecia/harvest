@@ -24,7 +24,7 @@ import wlv.mt.tools.*;
  * <config file>
  *
  *
- * @author Catalina Hallett & Mariano Felice<br>
+ * @author Catalina Hallett & Mariano Felice, modified by Eleftherios Avramidis<br>
  */
 public class FeatureExtractor {
 
@@ -240,18 +240,6 @@ public class FeatureExtractor {
         Giza giza = new Giza(gizaPath);
     }
 
-    /**
-     * Initialize the parcers and get PCFG parse for source and target lang with Berkeley 
-     */
-    private static void parseBerkeley() {
-    	String sourceGrammarFile = resourceManager.getString("berkeley." + sourceLang + ".grammar" );
-    	
-    	
-    	String targetGrammarFile = resourceManager.getString("berkeley." + targetLang + ".grammar" );
-    	
-    	
-    }
-    
     /*
      * Computes the perplexity and log probability for the source file Required
      * by features 8-13
@@ -330,6 +318,7 @@ public class FeatureExtractor {
             e.printStackTrace();
         }
 
+        //TODO: why are the languages hardcoded?
         //run tokenizer for source (English)
         System.out.println("running tokenizer");
         //Tokenizer enTok = new Tokenizer(inputSourceFile.getPath(),inputSourceFile.getPath()+".tok", resourceManager.getString("english.lowercase"),resourceManager.getString("english.tokenizer"), "en", forceRun);
@@ -350,6 +339,7 @@ public class FeatureExtractor {
         esTok.run();
         targetFile = esTok.getTok();
         System.out.println(targetFile);
+        
 
     }
 
@@ -480,7 +470,6 @@ public class FeatureExtractor {
 
         loadGiza();
         processNGrams();
-        parseBerkeley();
 
         try {
             BufferedReader brSource = new BufferedReader(new FileReader(
@@ -496,6 +485,27 @@ public class FeatureExtractor {
                     .isRegistered("targetPosTagger");
             POSProcessor posSourceProc = null;
             POSProcessor posTargetProc = null;
+            
+            //lefterav: Berkeley parser modifications start here
+            //Check if user has defined the grammar files for source 
+            //and target language
+            String sourceGrammarEntry = "parser.pcfg.grammar." + sourceLang;
+            boolean sourceGrammarExists = ResourceManager
+            		.isRegistered(sourceGrammarEntry);
+            String targetGrammarEntry = "parser.pcfg.grammar." + targetLang;
+            boolean targetGrammarExists = ResourceManager
+            		.isRegistered(targetGrammarEntry);
+            
+            ResourceProcessor sourceParserProcessor;
+            ResourceProcessor targetParserProcessor;
+            
+            String sourceGrammarFilename = resourceManager.getString(sourceGrammarEntry);
+            sourceParserProcessor = new BParserProcessor(sourceGrammarFilename);            
+            
+            String targetGrammar = resourceManager.getString(targetGrammarEntry);
+            targetParserProcessor = new BParserProcessor(targetGrammar);
+           
+            
 //			if (posSourceExists) {
 //				posSourceProc = new POSProcessor(sourcePosOutput);
 //				 posSource = new BufferedReader(new InputStreamReader(new
@@ -537,6 +547,12 @@ public class FeatureExtractor {
                 targetSent.computeNGrams(3);
                 pplProcSource.processNextSentence(sourceSent);
                 pplProcTarget.processNextSentence(targetSent);
+            	
+                //lefterav: Parse code here
+                sourceParserProcessor.processNextSentence(sourceSent);
+            	targetParserProcessor.processNextSentence(targetSent);
+                
+                
 //                                pplPosTarget.processNextSentence(targetSent);
                 ++sentCount;
                 output.write(featureManager.runFeatures(sourceSent, targetSent));
