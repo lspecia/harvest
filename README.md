@@ -49,4 +49,8 @@ of different cases are in src/wlv/mt/tools/
 Dependencies
 ============
 
-- Stanford POS Tagger ( http://nlp.stanford.edu/software/tagger.shtml#Download )
+- Stanford POS Tagger ( http://nlp.stanford.edu/shttp://mirror.synyx.de/apache//commons/cli/binaries/commons-cli-1.2-bin.tar.gzoftware/tagger.shtml#Download )
+- Berkeley Parser for Java 1.6 SVN ( custom updated jar: http://www.dfki.de/~elav01/download/quest/BerkeleyParser.jar )
+- Apache CLI ( http://mirror.synyx.de/apache//commons/cli/binaries/commons-cli-1.2-bin.tar.gz )
+
+
