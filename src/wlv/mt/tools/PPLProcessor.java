@@ -4,6 +4,8 @@
 package wlv.mt.tools;
 
 import wlv.mt.features.util.*;
+import wlv.mt.util.PropertiesManager;
+
 import java.io.*;
 
 /**
@@ -81,4 +83,22 @@ public class PPLProcessor extends ResourceProcessor {
             e.printStackTrace();
         }
     }
+
+	@Override
+	public void initializeFromProperties(String sourceFile,
+			PropertiesManager resourceManager) {
+		// required by BB features 8-13
+        NGramExec nge = new NGramExec(
+                resourceManager.getString("tools.ngram.path"));
+        System.out.println("runNgramPPL");
+        File f = new File(sourceFile);
+        String sourceOutput = input
+                + File.separator + language + File.separator + f.getName()
+                + ".ppl";
+        
+        nge.runNGramPerplex(sourceFile, sourceOutput,
+                resourceManager.getString(language + ".lm"));
+
+		
+	}
 }

@@ -206,23 +206,7 @@ public class FeatureExtractor {
      * by features 8-13
      */
     private static void runNGramPPL() {
-        // required by BB features 8-13
-        NGramExec nge = new NGramExec(
-                resourceManager.getString("tools.ngram.path"));
-        System.out.println("runNgramPPL");
-        File f = new File(sourceFile);
-        String sourceOutput = input
-                + File.separator + sourceLang + File.separator + f.getName()
-                + ".ppl";
-        f = new File(targetFile);
-        String targetOutput = input
-                + File.separator + targetLang + File.separator + f.getName()
-                + ".ppl";
-        nge.runNGramPerplex(sourceFile, sourceOutput,
-                resourceManager.getString(sourceLang + ".lm"));
-        System.out.println(resourceManager.getString(targetLang + ".lm"));
-        nge.runNGramPerplex(targetFile, targetOutput,
-                resourceManager.getString(targetLang + ".lm"));
+        
     }
 
     /**
@@ -399,7 +383,7 @@ public class FeatureExtractor {
     	
         List<String> processorNames = new ArrayList<String>();
         //TODO: this is hardcoded, but it should be obtained out of dependencies
-        processorNames.add("POSProcessor");
+        processorNames = featureManager.getRequiredProcessors();
         //wlv.mt.tools.
         
         ResourcePipeline processors = resourceManager.loadProcessors(processorNames);

@@ -3,6 +3,7 @@ package wlv.mt.tools;
 import java.io.*;
 import java.util.*;
 import wlv.mt.features.util.*;
+import wlv.mt.util.PropertiesManager;
 
 /**
  * This is a processor for the output of the MADA morphological analyser for
@@ -18,15 +19,34 @@ public class MorphAnalysisProcessor extends ResourceProcessor {
     private static String SENT_END = "SENTENCE";
     private static String WORD_START = ";;WORD";
     int count = 0;
+    
+    public MorphAnalysisProcessor(){
+    	
+    }
+    
+    public MorphAnalysisProcessor(String input){
+    	initialize(input);
+    }
+    
+	@Override
+	public void initializeFromProperties(String sourceFile,
+			PropertiesManager resourceManager) {
+		initialize(input);
 
-    public MorphAnalysisProcessor(String inputFile) {
+    }
+	
+	/**
+	 * Private function that sets the buffereader for the input
+	 * @param input the name of the input file
+	 */
+	private void initialize(String input){
         try {
-            System.out.println("input to map: " + inputFile);
-            brInput = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile)));
+            System.out.println("input to map: " + input);
+            brInput = new BufferedReader(new InputStreamReader(new FileInputStream(input)));
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+	}
 
     public void processNextSentence(Sentence sent) {
         try {
@@ -145,4 +165,6 @@ public class MorphAnalysisProcessor extends ResourceProcessor {
             i++;
         }
     }
+
+
 }

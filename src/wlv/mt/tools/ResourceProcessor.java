@@ -25,16 +25,16 @@ import wlv.mt.util.PropertiesManager;
  */
 public abstract class ResourceProcessor {
 	
-	/**
-	 * @param language: The language of this particular Processor
-	 */
+
 	protected String language;
 	protected String input;
+	protected String outputFile; //Every resource processor should not its output file
 	
 	/**
 	 * Every ResourceProcessor sub-class should be able to read its 
 	 * parameters from the configuration file. This is done by reading
-	 * strings from the passed PropertiesManager
+	 * strings from the passed PropertiesManager. 
+	 * 
 	 * @param language: The name of the language that this processor is responsible for
 	 * 	(this helps with retrieving parameters)
 	 * @param pm : A properties manager, which contains 
@@ -43,6 +43,14 @@ public abstract class ResourceProcessor {
 	public ResourceProcessor() {
 		
 	}
+	/**
+	 * This function is initializing whatever is needed for this Processor,
+	 * and if needed also does the processing for the whole corpus.
+	 * The output of the initial processing is placed in this.outputFile
+	 * which needs to be set in the function
+	 * @param sourceFile
+	 * @param resourceManager
+	 */
 	public abstract void initializeFromProperties(String sourceFile, PropertiesManager resourceManager);
 	public void initializeFromProperties(String sourceFile, PropertiesManager resourceManager, String input, String language ){
 		this.language = language;

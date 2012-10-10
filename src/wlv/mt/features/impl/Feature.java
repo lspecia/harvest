@@ -36,7 +36,7 @@ public abstract class Feature {
      * @return the list
      */
     public List<String> getRequiredSourceProcessors(){
-    	List<String> processorNames = super.getRequiredProcessors();
+    	List<String> processorNames = new ArrayList<String>();
     	return processorNames;
     }    
     
@@ -45,7 +45,7 @@ public abstract class Feature {
      * @return the list
      */
     public List<String> getRequiredTargetProcessors(){
-    	List<String> processorNames = super.getRequiredProcessors();
+    	List<String> processorNames = new ArrayList<String>();
     	return processorNames;
     }
     

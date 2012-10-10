@@ -30,7 +30,7 @@ public class POSProcessor extends ResourceProcessor {
     
     @Override
     public void initializeFromProperties(String sourceFile, PropertiesManager resourceManager) {
-    	runPOS(resourceManager, sourceFile, "source");
+    	outputFile = runPOS(resourceManager, sourceFile, "source");
     	
     }
     
