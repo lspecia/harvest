@@ -1,5 +1,8 @@
 package wlv.mt.features.impl.bb;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import wlv.mt.features.impl.Feature;
 import wlv.mt.features.util.Sentence;
 
@@ -16,6 +19,13 @@ public class Feature1067 extends Feature {
     public Feature1067() {
         setIndex(1067);
         setDescription("absolute difference between number of : in source and target normalised by target length");
+    }
+    
+    @Override
+    public List<String> getRequiredProcessors(){
+    	List<String> processorNames = super.getRequiredProcessors();
+    	processorNames.add("POSProcessor");
+    	return processorNames;
     }
 
     public void run(Sentence source, Sentence target) {

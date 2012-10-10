@@ -5,11 +5,16 @@
 package wlv.mt.util;
 
 import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+
+import wlv.mt.tools.ResourcePipeline;
+import wlv.mt.tools.ResourceProcessor;
 
 /**
  *
- * @author cat
+ * @author atalina Hallett and Eleftherios Avramidis
  */
 public class PropertiesManager extends java.util.Properties {
 
@@ -48,6 +53,64 @@ public class PropertiesManager extends java.util.Properties {
             e.printStackTrace();
             notFound = true;
         }
+    }
+    
+    
+	/**
+	 * It receives a list of strings, with names of processors
+	 * Then it dynamically loads the classes, constructs them and returns
+	 * a pipeline object
+	 * @param processorNames A list of the names of the processors needed
+	 * @return a pipeline of initialized processors
+	 */
+    public ResourcePipeline loadProcessors(List<String> processorNames){
+    	ResourcePipeline processors = new ResourcePipeline();
+
+        //Load classes
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        for (String processorName:processorNames) {
+        	// the class has to be searched with  a concatenation of the package and the class name
+        	String processorPath = "wlv.mt.tools." + processorName;
+        	try {
+        		//get the class by specifying the name
+				Class<ResourceProcessor> processorClass = (Class<ResourceProcessor>) classLoader.loadClass(processorPath);
+				try {
+					//get the constructor method
+					Constructor<ResourceProcessor> constructor = processorClass.getDeclaredConstructor();
+					//invoke the constructor method (this is the dynamic version of ResourceProcessor processor = new ResourceProcessor()
+					ResourceProcessor processor = constructor.newInstance();
+					//add that in the pipeline that will be exported
+					processors.add(processor);
+				//here is a whole bunch of exceptions that allegedly need to be dealt with
+				} catch (SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NoSuchMethodException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} catch (ClassNotFoundException e) {
+				//this probably means that the class is not in 'tools' package
+				System.err.println("Some feature asked for a Processor which has not been implemented");
+				e.printStackTrace();
+//				System.exit()
+			}
+        	
+        }
+        
+        return processors;
     }
 
     private void loadProperties(String name, ClassLoader loader) {

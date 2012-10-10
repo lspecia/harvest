@@ -3,6 +3,8 @@
  */
 package wlv.mt.features.impl.bb;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import wlv.mt.features.impl.Feature;
@@ -23,6 +25,13 @@ public class Feature1079 extends Feature {
     public Feature1079() {
         setIndex(1079);
         setDescription("absolute difference between number of numbers in the source and target sentence normalised by source sentence length");
+    }
+    
+    @Override
+    public List<String> getRequiredProcessors(){
+    	List<String> processorNames = super.getRequiredProcessors();
+    	processorNames.add("POSProcessor");
+    	return processorNames;
     }
 
     @Override

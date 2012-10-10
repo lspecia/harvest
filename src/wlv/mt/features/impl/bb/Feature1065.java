@@ -1,5 +1,8 @@
 package wlv.mt.features.impl.bb;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import wlv.mt.features.impl.Feature;
 import wlv.mt.features.util.Sentence;
 
@@ -17,6 +20,13 @@ public class Feature1065 extends Feature {
         setDescription("absolute difference between number of commas in source and target normalised by target length");
     }
 
+    @Override
+    public List<String> getRequiredProcessors(){
+    	List<String> processorNames = super.getRequiredProcessors();
+    	processorNames.add("POSProcessor");
+    	return processorNames;
+    }
+    
     @Override
     public void run(Sentence source, Sentence target) {
         // TODO Auto-generated method stub

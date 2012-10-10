@@ -1,6 +1,8 @@
 package wlv.mt.features.impl.bb;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import wlv.mt.features.impl.Feature;
 import wlv.mt.features.util.Sentence;
@@ -17,6 +19,13 @@ public class Feature1076 extends Feature {
     public Feature1076() {
         setIndex(1076);
         setDescription("absolute difference between number of punctuation marks between source and target normalised by target length");
+    }
+    
+    @Override
+    public List<String> getRequiredProcessors(){
+    	List<String> processorNames = super.getRequiredProcessors();
+    	processorNames.add("POSProcessor");
+    	return processorNames;
     }
 
     public void run(Sentence source, Sentence target) {

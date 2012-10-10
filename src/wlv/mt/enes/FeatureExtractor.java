@@ -1,7 +1,11 @@
 package wlv.mt.enes;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.cli.*;
 import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import wlv.mt.util.*;
 import wlv.mt.features.util.*;
@@ -24,7 +28,7 @@ import wlv.mt.tools.*;
  * <config file>
  *
  *
- * @author Catalina Hallett & Mariano Felice<br>
+ * @author Catalina Hallett and Mariano Felice and Eleftherios Avramidis<br>
  */
 public class FeatureExtractor {
 
@@ -33,7 +37,7 @@ public class FeatureExtractor {
     private static String wordLattices;
     private static String gizaAlignFile;
     /**
-     * path to the input folder
+     * path to the input folderinput
      */
     private static String input;
     /**
@@ -188,50 +192,7 @@ public class FeatureExtractor {
         }
     }
 
-    public void runPOSTagger() {
-        // required by BB features 65-69, 75-80
-        String sourceOutput = runPOS(sourceFile, sourceLang, "source");
-        String targetOutput = runPOS(targetFile, targetLang, "target");
-
-    }
-
-    /**
-     * runs the part of speech tagger
-     *
-     * @param file input file
-     * @param lang language
-     * @param type source or target
-     * @return path to the output file of the POS tagger
-     */
-    public String runPOS(String file, String lang, String type) {
-        String posName = resourceManager.getString(lang + ".postagger");
-        String langResPath = input + File.separator + lang;
-        File f = new File(file);
-        String absoluteSourceFilePath = f.getAbsolutePath();
-        String fileName = f.getName();
-        String relativeFilePath = langResPath + File.separator + fileName
-                + ".pos";
-        String absoluteOutputFilePath = (new File(relativeFilePath))
-                .getAbsolutePath();
-        String posSourceTaggerPath = resourceManager.getString(lang
-                + ".postagger.exePath");
-        String outPath = "";
-        try {
-            Class c = Class.forName(posName);
-            PosTagger tagger = (PosTagger) c.newInstance();
-            tagger.setParameters(type, posName, posSourceTaggerPath,
-                    absoluteSourceFilePath, absoluteOutputFilePath);
-            PosTagger.ForceRun(forceRun);
-            outPath = tagger.run();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        // returns the path of the output file; this is for convenience only so
-        // we do't have to calculate it again
-        return outPath;
-
-    }
-
+    
     private static void loadGiza() {
 
         String gizaPath = resourceManager.getString("pair." + sourceLang
@@ -320,7 +281,7 @@ public class FeatureExtractor {
 
         //run tokenizer for source (English)
         System.out.println("running tokenizer");
-        //Tokenizer enTok = new Tokenizer(inputSourceFile.getPath(),inputSourceFile.getPath()+".tok", resourceManager.getString("english.lowercase"),resourceManager.getString("english.tokenizer"), "en", forceRun);
+        //Tokenizer enTforceRunok = new Tokenizer(inputSourceFile.getPath(),inputSourceFile.getPath()+".tok", resourceManager.getString("english.lowercase"),resourceManager.getString("english.tokenizer"), "en", forceRun);
         // Truecaser
         String truecasePath = "";
         truecasePath = resourceManager.getString("english.truecase") + "|" + resourceManager.getString("english.truecase.model");
@@ -421,10 +382,33 @@ public class FeatureExtractor {
      */
     public void run() {
         constructFolders();
-        preprocessing();
-        runBB();
+//        preprocessing();
+        runResourceProcessors();
     }
 
+    
+    public void runResourceProcessors() {
+    	//Prepare input and output file
+    	File f = new File(sourceFile);
+        String sourceFileName = f.getName();
+        f = new File(targetFile);
+        String targetFileName = f.getName();
+        String outputFileName = sourceFileName + "_to_" + targetFileName + ".out";
+        String out = resourceManager.getString("output") + File.separator + outputFileName;
+        System.err.println("Output will be: " + out);
+    	
+        List<String> processorNames = new ArrayList<String>();
+        //TODO: this is hardcoded, but it should be obtained out of dependencies
+        processorNames.add("POSProcessor");
+        //wlv.mt.tools.
+        
+        ResourcePipeline processors = resourceManager.loadProcessors(processorNames);
+        processors.initialize(sourceFile, resourceManager, input, sourceLang);
+        processors.initialize(targetFile, resourceManager, input, targetLang);     
+        
+        
+    }
+    
     /**
      * runs the BB features
      */
@@ -446,18 +430,24 @@ public class FeatureExtractor {
 
 
 //		String pplPOSTargetPath = resourceManager.getString("input")
-//		+ File.separator + targetLang + File.separator + targetFileName+PosTagger.getXPOS()
+//		+ FArrayile.separator + targetLang + File.separator + targetFileName+PosTagger.getXPOS()
 //		+ ngramOutputExt;
 
+        ResourcePipeline preprocessors = new ResourcePipeline();
+        
         runNGramPPL();
 
-        PPLProcessor pplProcSource = new PPLProcessor(pplSourcePath,
+        ResourceProcessor pplProcSource = new PPLProcessor(pplSourcePath,
                 new String[]{"logprob", "ppl", "ppl1"});
-        PPLProcessor pplProcTarget = new PPLProcessor(pplTargetPath,
+        preprocessors.add(pplProcSource);
+        
+        ResourceProcessor pplProcTarget = new PPLProcessor(pplTargetPath,
                 new String[]{"logprob", "ppl", "ppl1"});
+        preprocessors.add(pplProcTarget);
 
-        FileModel fm = new FileModel(sourceFile,
-                resourceManager.getString(sourceLang + ".corpus"));
+        
+//        FileModel fm = new FileModel(sourceFile,
+//                resourceManager.getString(sourceLang + ".corpus"));
 //              String sourcePosOutput = runPOS(sourceFile, sourceLang, "source");
 //		String targetPosOutput = runPOS(targetFile, targetLang, "target");
 
@@ -470,10 +460,8 @@ public class FeatureExtractor {
         processNGrams();
 
         try {
-            BufferedReader brSource = new BufferedReader(new FileReader(
-                    sourceFile));
-            BufferedReader brTarget = new BufferedReader(new FileReader(
-                    targetFile));
+            BufferedReader brSource = new BufferedReader(new FileReader(sourceFile));
+            BufferedReader brTarget = new BufferedReader(new FileReader(targetFile));
             BufferedWriter output = new BufferedWriter(new FileWriter(out));
             BufferedReader posSource = null;
             BufferedReader posTarget = null;
@@ -481,8 +469,8 @@ public class FeatureExtractor {
                     .isRegistered("sourcePosTagger");
             boolean posTargetExists = ResourceManager
                     .isRegistered("targetPosTagger");
-            POSProcessor posSourceProc = null;
-            POSProcessor posTargetProc = null;
+            ResourceProcessor posSourceProc = null;
+            ResourceProcessor posTargetProc = null;
 //			if (posSourceExists) {
 //				posSourceProc = new POSProcessor(sourcePosOutput);
 //				 posSource = new BufferedReader(new InputStreamReader(new
@@ -515,10 +503,10 @@ public class FeatureExtractor {
                 //System.out.println("SORCE: " + sourceSent.getText());
                 //System.out.println("TARGET: " + targetSent.getText());
                 if (posSourceExists) {
-                    posSourceProc.processSentence(sourceSent);
+                    posSourceProc.processNextSentence(sourceSent);
                 }
                 if (posTargetExists) {
-                    posTargetProc.processSentence(targetSent);
+                    posTargetProc.processNextSentence(targetSent);
                 }
                 sourceSent.computeNGrams(3);
                 targetSent.computeNGrams(3);

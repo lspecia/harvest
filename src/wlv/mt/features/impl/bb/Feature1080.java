@@ -3,6 +3,8 @@
  */
 package wlv.mt.features.impl.bb;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import wlv.mt.features.impl.Feature;
@@ -22,6 +24,13 @@ public class Feature1080 extends Feature {
     public Feature1080() {
         setIndex(1080);
         setDescription("");
+    }
+    
+    @Override
+    public List<String> getRequiredProcessors(){
+    	List<String> processorNames = super.getRequiredProcessors();
+    	processorNames.add("POSProcessor");
+    	return processorNames;
     }
 
     @Override

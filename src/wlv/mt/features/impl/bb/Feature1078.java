@@ -3,6 +3,9 @@
  */
 package wlv.mt.features.impl.bb;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import wlv.mt.features.impl.Feature;
 import wlv.mt.features.util.*;
 
@@ -20,6 +23,13 @@ public class Feature1078 extends Feature {
     public Feature1078() {
         setIndex(1078);
         setDescription("percentage of numbers in the target sentence");
+    }
+    
+    @Override
+    public List<String> getRequiredProcessors(){
+    	List<String> processorNames = super.getRequiredProcessors();
+    	processorNames.add("POSProcessor");
+    	return processorNames;
     }
 
     @Override

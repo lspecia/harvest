@@ -3,6 +3,7 @@ package wlv.mt.tools;
 import java.io.*;
 
 import wlv.mt.features.util.*;
+import wlv.mt.util.PropertiesManager;
 
 /**
  * The POSProcessor class analyses a file produced by a pos tagger and sets
@@ -10,7 +11,7 @@ import wlv.mt.features.util.*;
  * of nouns, verbs, pronouns and content words
  *
  */
-public class POSProcessor {
+public class POSProcessor extends ResourceProcessor {
 
     BufferedReader br;
     int sentCount;
@@ -26,7 +27,62 @@ public class POSProcessor {
      * @param input the input file
      *
      */
-    public POSProcessor(String input) {
+    
+    @Override
+    public void initializeFromProperties(String sourceFile, PropertiesManager resourceManager) {
+    	runPOS(resourceManager, sourceFile, "source");
+    	
+    }
+    
+    
+//    public void runPOSTagger() {
+//        // required by BB features 65-69, 75-80
+//        String sourceOutput = runPOS(sourceFile, sourceLang, "source");
+//        String targetOutput = runPOS(targetFile, targetLang, "target");
+//
+//    }
+
+    /**
+     * runs the part of speech tagger
+     *
+     * @param file input file
+     * @param lang language
+     * @param type source or target
+     * @return path to the output file of the POS tagger
+     */
+    public String runPOS(PropertiesManager resourceManager, String file, String type) {
+    	String lang = language;
+        String posName = resourceManager.getString(lang + ".postagger");
+        String langResPath = input + File.separator + lang;
+        File f = new File(file);
+        String absoluteSourceFilePath = f.getAbsolutePath();
+        String fileName = f.getName();
+        String relativeFilePath = langResPath + File.separator + fileName
+                + ".pos";
+        String absoluteOutputFilePath = (new File(relativeFilePath))
+                .getAbsolutePath();
+        String posSourceTaggerPath = resourceManager.getString(lang
+                + ".postagger.exePath");
+        String outPath = "";
+        try {
+            Class<PosTagger> c = (Class<PosTagger>) Class.forName(posName, false, ClassLoader.getSystemClassLoader());
+            PosTagger tagger = c.newInstance();
+            tagger.setParameters(type, posName, posSourceTaggerPath,
+                    absoluteSourceFilePath, absoluteOutputFilePath);
+            //TODO: fix forceRun
+            PosTagger.ForceRun(true);
+            outPath = tagger.run();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // returns the path of the output file; this is for convenience only so
+        // we do't have to calculate it again
+        return outPath;
+
+    }
+
+    
+    public void initialize(String input) {
         try {
             System.out.println("INPUT TO POSPROCESSOR:" + input);
             br = new BufferedReader(new FileReader(input));
@@ -45,7 +101,7 @@ public class POSProcessor {
      * @see Sentence.setValue()
      * @param sent the sentence to be analysed
      */
-    public void processSentence(Sentence sent) throws Exception {
+    public void processNextSentence(Sentence sent) throws Exception {
         int tokCount = sent.getNoTokens();
         String line = br.readLine();
         int contentWords = 0;
@@ -93,4 +149,8 @@ public class POSProcessor {
     /*      public static String getXPOS(){
      return XPOS;
      }*/
+
+
+
+
 }

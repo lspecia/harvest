@@ -21,7 +21,7 @@ import wlv.mt.util.*;
  * FeatureLoader to instantiate the selected features<br> It also provides a
  * method for running the features over a given pair of source-target Sentences
  *
- * @author Catalina Hallett
+ * @author Catalina Hallett, Eleftherios Avramidis
  *
  */
 public class FeatureManager {
@@ -49,6 +49,7 @@ public class FeatureManager {
     public FeatureManager(String featureFile) {
         featureConfig = featureFile;
     }
+
 
     public void setFeatureList(String featureArgs) {
         if (!featureArgs.equals("all")) {
@@ -95,6 +96,7 @@ public class FeatureManager {
         System.out.println("number of features:" + features.size());
 //		System.out.println(features.keySet());
     }
+    
 
     /**
      * removes a Feature from the features list
@@ -208,5 +210,22 @@ public class FeatureManager {
             System.out.print(it.next() + "\t");
         }
         System.out.println();
+    }
+    
+    public ArrayList<String> getRequiredProcessors(){
+    	Set<String> fIndices = features.keySet();
+    	Set<String> requiredProcessorsSet = new HashSet<String>();
+    	
+    	//iterate through features and get each one's dependencies
+    	for (String index:fIndices){
+    		Feature f = features.get(index);
+    		//augment the previous dependencies with the ones observed now 
+    		requiredProcessorsSet.addAll(f.getRequiredProcessors());
+    		System.err.println("Feature " + f + "  needs processors" + f.getRequiredProcessors());
+    	}
+    	//convert the set to an ArrayList
+    	ArrayList<String> requiredProcessors = new ArrayList<String>(requiredProcessorsSet);
+		return requiredProcessors;
+    	
     }
 }

@@ -22,6 +22,34 @@ public abstract class Feature {
     private HashSet<String> resources;
 
     /**
+     * Get a list of the names of the bilingual processors that are required
+     * @return the list
+     */
+    public List<String> getRequiredProcessors(){
+    	List<String> processorNames = new ArrayList<String>();
+    	//TODO: add here default processors, like tokenizer and truecaser
+    	return processorNames;
+    }
+    
+    /**
+     * Get a list of the names of the soruce processors that are required
+     * @return the list
+     */
+    public List<String> getRequiredSourceProcessors(){
+    	List<String> processorNames = super.getRequiredProcessors();
+    	return processorNames;
+    }    
+    
+    /**
+     * Get a list of the names of the target processors that are required
+     * @return the list
+     */
+    public List<String> getRequiredTargetProcessors(){
+    	List<String> processorNames = super.getRequiredProcessors();
+    	return processorNames;
+    }
+    
+    /**
      * returns the value
      */
     public float getValue() {
