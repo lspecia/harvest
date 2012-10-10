@@ -1,5 +1,4 @@
 package wlv.mt.features.util;
-
 import wlv.mt.features.util.*;
 import wlv.mt.features.impl.*;
 
@@ -86,7 +85,7 @@ public class FeatureLoader {
     public void loadFeatures() {
         nodes = new HashMap<String, Feature>();
         try {
-
+        	System.err.println("Opening " + xmlFile);
             doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new File(xmlFile));
             NodeList links = doc.getElementsByTagName("feature");
 

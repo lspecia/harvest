@@ -451,15 +451,15 @@ public class FeatureExtractor {
 //		+ File.separator + targetLang + File.separator + targetFileName+PosTagger.getXPOS()
 //		+ ngramOutputExt;
 
-        runNGramPPL();
+//        runNGramPPL();
+//
+//        PPLProcessor pplProcSource = new PPLProcessor(pplSourcePath,
+//                new String[]{"logprob", "ppl", "ppl1"});
+//        PPLProcessor pplProcTarget = new PPLProcessor(pplTargetPath,
+//                new String[]{"logprob", "ppl", "ppl1"});
 
-        PPLProcessor pplProcSource = new PPLProcessor(pplSourcePath,
-                new String[]{"logprob", "ppl", "ppl1"});
-        PPLProcessor pplProcTarget = new PPLProcessor(pplTargetPath,
-                new String[]{"logprob", "ppl", "ppl1"});
-
-        FileModel fm = new FileModel(sourceFile,
-                resourceManager.getString(sourceLang + ".corpus"));
+//        FileModel fm = new FileModel(sourceFile,
+//               resourceManager.getString(sourceLang + ".corpus"));
 //              String sourcePosOutput = runPOS(sourceFile, sourceLang, "source");
 //		String targetPosOutput = runPOS(targetFile, targetLang, "target");
 
@@ -468,8 +468,8 @@ public class FeatureExtractor {
 //		PPLProcessor pplPosTarget = new PPLProcessor(targetPPLPos,
 //				new String[] { "poslogprob", "posppl", "posppl1" });
 
-        loadGiza();
-        processNGrams();
+        //loadGiza();
+        //processNGrams();
 
         try {
             BufferedReader brSource = new BufferedReader(new FileReader(
@@ -477,34 +477,24 @@ public class FeatureExtractor {
             BufferedReader brTarget = new BufferedReader(new FileReader(
                     targetFile));
             BufferedWriter output = new BufferedWriter(new FileWriter(out));
-            BufferedReader posSource = null;
+            /*BufferedReader posSource = null;
             BufferedReader posTarget = null;
             boolean posSourceExists = ResourceManager
                     .isRegistered("sourcePosTagger");
             boolean posTargetExists = ResourceManager
                     .isRegistered("targetPosTagger");
             POSProcessor posSourceProc = null;
-            POSProcessor posTargetProc = null;
+            POSProcessor posTargetProc = null;*/
             
             //lefterav: Berkeley parser modifications start here
             //Check if user has defined the grammar files for source 
             //and target language
-            String sourceGrammarEntry = "parser.pcfg.grammar." + sourceLang;
-            boolean sourceGrammarExists = ResourceManager
-            		.isRegistered(sourceGrammarEntry);
-            String targetGrammarEntry = "parser.pcfg.grammar." + targetLang;
-            boolean targetGrammarExists = ResourceManager
-            		.isRegistered(targetGrammarEntry);
+        
             
-            ResourceProcessor sourceParserProcessor;
-            ResourceProcessor targetParserProcessor;
-            
-            String sourceGrammarFilename = resourceManager.getString(sourceGrammarEntry);
-            sourceParserProcessor = new BParserProcessor(sourceGrammarFilename);            
-            
-            String targetGrammar = resourceManager.getString(targetGrammarEntry);
-            targetParserProcessor = new BParserProcessor(targetGrammar);
-           
+            BParserProcessor sourceParserProcessor = new BParserProcessor();
+            sourceParserProcessor.initializeFromProperties(sourceFile, resourceManager, sourceLang);
+            BParserProcessor targetParserProcessor = new BParserProcessor();
+            targetParserProcessor.initializeFromProperties(targetFile, resourceManager, targetLang);           
             
 //			if (posSourceExists) {
 //				posSourceProc = new POSProcessor(sourcePosOutput);
@@ -537,7 +527,7 @@ public class FeatureExtractor {
                 //System.out.println("Processing sentence "+sentCount);
                 //System.out.println("SORCE: " + sourceSent.getText());
                 //System.out.println("TARGET: " + targetSent.getText());
-                if (posSourceExists) {
+                /*if (posSourceExists) {
                     posSourceProc.processSentence(sourceSent);
                 }
                 if (posTargetExists) {
@@ -546,7 +536,7 @@ public class FeatureExtractor {
                 sourceSent.computeNGrams(3);
                 targetSent.computeNGrams(3);
                 pplProcSource.processNextSentence(sourceSent);
-                pplProcTarget.processNextSentence(targetSent);
+                pplProcTarget.processNextSentence(targetSent);*/
             	
                 //lefterav: Parse code here
                 sourceParserProcessor.processNextSentence(sourceSent);
@@ -560,12 +550,12 @@ public class FeatureExtractor {
                 lineSource = brSource.readLine();
                 lineTarget = brTarget.readLine();
             }
-            if (posSource != null) {
+            /*if (posSource != null) {
                 posSource.close();
             }
             if (posTarget != null) {
                 posTarget.close();
-            }
+            }*/
 
             brSource.close();
             brTarget.close();

@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import wlv.mt.features.util.Sentence;
 import wlv.mt.tools.BParser;
+import wlv.mt.util.PropertiesManager;
 
 /**
  * A processor class for the BParser. It loads the 
@@ -16,24 +17,25 @@ import wlv.mt.tools.BParser;
  */
 public class BParserProcessor extends ResourceProcessor {
 	
-	static BParser parser;
+	BParser parser;
+	boolean tokenizer;
 	
-	public BParserProcessor(String grammarFilename){
-		parser = new BParser(grammarFilename);
+	public void initializeFromProperties(String inputFile, PropertiesManager rm, String language){
+		String grammarFilename = rm.getString(language + ".bparser.grammar");
+		parser = new BParser(grammarFilename, (language == "chinese"));
+		tokenizer = false;
 	}
-
+	
 	@Override
 	public void processNextSentence(Sentence s) {
-		// Fetch results of parsing the sentence in a Hashmap   
-		Map<String, String> parseResults = parser.getParseFeatures(s.getText(), false);
-		Iterator<Map.Entry<String, String>> it = parseResults.entrySet().iterator();
-		//TODO: Fix the entry of integers and doubles, now everything is passed through as a string
-		while (it.hasNext()) {
-	        Map.Entry<String, String> pairs = (Map.Entry<String, String>)it.next();
-	        s.setValue(pairs.getKey(), pairs.getValue());
-	        it.remove(); // avoids a ConcurrentModificationException
-	    }
+		parser.getParseFeatures(s.getText(), tokenizer);
+		String parseTree = parser.getParseTree();
+		s.addParse(parseTree);
 		
+		s.setValue("bparser.avgConfidence", parser.getAvgConfidence());
+		s.setValue("bparser.bestParseConfidence", parser.getBestParseConfidence());
+		s.setValue("bparser.n", parser.getParseTreesN());
+		s.setValue("bparser.loglikelihood", parser.getLoglikelihood());
 	}
 	
 	

@@ -27,6 +27,7 @@ public class Sentence {
     private SentenceTranslationModel sentenceTranslationModel;
     private Translation center;
     private ArrayList<PronMorph> morphs;
+    private String parse;
 
     public Sentence(String s, int index) {
         sentence = s;
@@ -34,6 +35,7 @@ public class Sentence {
         center = null;
         values = new HashMap<String, Object>();
         tokens = sentence.trim().split(" ");
+        parse = new String();
     }
 
     public String getText() {
@@ -66,6 +68,22 @@ public class Sentence {
             tdl = new ArrayList<Pair>();
         }
         tdl.add(new Pair(key, value));
+    }
+    
+    /**
+     * Stores the parse of the sentence as a string
+     * @param parse the parse of the sentence
+     */
+    public void addParse(String parse){
+    	this.parse = parse;
+    }
+    
+    /**
+     * Returns the parse of the sentence as a string
+     * @return the parse of the sentence
+     */
+    public String getParse(){
+    	return this.parse;
     }
 
     public void addDependency(Pair pair) {

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<features>
+    <feature class="wlv.mt.features.impl.bb.Feature1001" description="Number of tokens in source" index="1001"/>
+    <feature class="wlv.mt.features.impl.bb.Feature1002" description="Number of tokens in target" index="1002"/>
+    <feature class="wlv.mt.features.impl.bb.Feature1003" description="ratio of number of tokens in source and target" index="1003"/>
+    <feature class="wlv.mt.features.impl.bb.Feature1202" description="ratio of number of tokens in source and target" index="1202"/>
+
+</features>
